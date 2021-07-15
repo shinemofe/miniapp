@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+    />
+    <title>小程序SDK示例</title>
+    <link rel="stylesheet" href="styles/index.css" />
+     <!-- 小程序SDK 只有在小程序容器中才能加载到 -->
+     <script src="shinemosdk://20000/index.js"></script>
+    <script src="lib/vconsole.min.js"></script>
+    <script>
+      xm.setEnableDebug({ enableDebug: true })
+    </script>
+  </head>
+  <body>
+    <div class="block close">
+      <div class="title">基础能力</div>
+      <div class="list">
+        <div class="item" data-api="isInNative">判断是否在小程序容器内</div>
+        <div class="item" data-api="canIUse">
+          判断小程序API是否在当前版本可用
+        </div>
+        <div class="item" data-api="getAppInfo">获取客户端信息</div>
+        <div class="item" data-api="events">事件</div>
+        <div class="item" data-api="native">调用客户端自定义方法</div>
+        <div class="item" data-api="share">分享</div>
+        <div class="item" data-api="token">token</div>
+        <div class="item" data-api="lifecircle">生命周期</div>
+        <div class="item" data-api="getAppConfig">获取客户端基础环境配置</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">界面</div>
+      <div class="list">
+        <div class="item" data-api="setNavigationBarTitle">设置界面标题</div>
+        <div class="item" data-api="pageScrollTo">页面滚动</div>
+        <div class="item" data-api="navigate">页面跳转</div>
+        <div class="item" data-api="selectDate">日期控件</div>
+        <div class="item" data-api="picker">显示选取组件</div>
+        <div class="item" data-api="showActionSheet">显示操作菜单</div>
+        <div class="item" data-api="showToast">显示Toast</div>
+        <div class="item" data-api="showLoading">显示Loading</div>
+        <div class="item" data-api="showAlert">显示Alert</div>
+        <div class="item" data-api="showConfirm">显示确认弹窗</div>
+        <div class="item" data-api="showPrompt">显示可输入提醒框</div>
+        <div class="item" data-api="showExceptionTip">显示错误页面</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">设备</div>
+      <div class="list">
+        <div class="item" data-api="wifi">wifi</div>
+        <div class="item" data-api="isOnline">判断是否联网</div>
+        <div class="item" data-api="getSystemInfo">获取手机系统信息</div>
+        <div class="item" data-api="makePhoneCall">打电话</div>
+        <div class="item" data-api="scanCode">扫码</div>
+        <div class="item" data-api="horizontalScreen">屏幕方向</div>
+        <div class="item" data-api="annotate">手写批注</div>
+        <div class="item" data-api="bluetooth">蓝牙</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">网络</div>
+      <div class="list">
+        <div class="item" data-api="fetch">发起一个请求</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">媒体</div>
+      <div class="list">
+        <div class="item" data-api="image">图片</div>
+        <div class="item" data-api="file">文件</div>
+        <div class="item" data-api="audio">语音</div>
+        <div class="item" data-api="media">视频</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">位置</div>
+      <div class="list">
+        <div class="item" data-api="location">获取当前位置</div>
+      </div>
+    </div>
+
+    <div class="block close">
+      <div class="title">数据</div>
+      <div class="list">
+        <div class="item" data-api="storage">数据存储与读取</div>
+        <!-- <div class="item" data-api="sql">数据库</div> -->
+      </div>
+    </div>
+
+    <!-- <div class="block">
+    <div class="title">生命周期</div>
+    <div class="list">
+      <div class="form">
+        <div class="form-item"><textarea id="J_output" rows="3"></textarea></div>
+      </div>
+    </div>
+  </div> -->
+
+    <script>
+      var titles = document.querySelectorAll('.title')
+
+      for (var i = 0; i < titles.length; i++) {
+        titles[i].addEventListener('click', function (ev) {
+          var isClosed = ev.target.parentNode.classList.contains('close')
+
+          for (var j = 0; j < titles.length; j++) {
+            titles[j].parentNode.classList.add('close')
+          }
+
+          if (isClosed) {
+            ev.target.parentNode.classList.remove('close')
+          } else {
+            ev.target.parentNode.classList.add('close')
+          }
+        })
+      }
+
+      document.body.addEventListener('click', function (ev) {
+        if (ev.target.classList.contains('item')) {
+          var api = ev.target.getAttribute('data-api')
+          console.log(api)
+          xm.navigateTo({ url: 'pages/' + api + '.html' })
+        }
+      })
+
+      xm.on('onLaunch', function () {
+        console.log('onLaunch')
+      })
+      xm.on('onLoad', function () {
+        console.log('onLoad')
+      })
+      xm.on('onAppResume', function () {
+        console.log('onAppResume')
+      })
+      xm.on('onAppClose', function () {
+        console.log('onAppClose')
+      })
+      xm.on('onPageShow', function () {
+        console.log('pageShow')
+      })
+      xm.on('onPageHide', function () {
+        console.log('pageHide')
+      })
+
+      xm.getStorage({ key: 'isAuthed' }).then(function (res) {
+        if (res !== '1') {
+          xm.showConfirm({
+            title: '应用授权',
+            message: '为了更好的体验，小程序Demo小程序需要获取您的登录信息'
+          }).then(function (r) {
+            if (r === 'ok') {
+              xm.setStorage({
+                key: 'isAuthed',
+                value: '1'
+              })
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>

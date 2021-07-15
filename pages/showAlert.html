@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>显示Alert</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.showAlert</span>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">显示Alert</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.showAlert({ title: 'alert标题', message: '这是一条alert内容' })
+    })
+  </script>
+</body>
+</html>

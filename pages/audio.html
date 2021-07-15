@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>语音</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body style="-webkit-user-select: none;">
+  <div class="api">
+    <span>xm.startRecord/xm.cancelRecord/xm.stopRecord</span>
+    <span>xm.pauseRecord/xm.resumeRecord</span>
+    <span>xm.playAudio/xm.stopAudio</span>
+    <span>xm.pauseAudio/xm.resumeAudio</span>
+  </div>
+
+  <div class="record-wrap">
+    <div class="record-item to-record" id="J_record"></div>
+    <div id="J_recordStatus"></div>
+  </div>
+
+  <div id="J_recordResult" class="">
+    <div class="form">
+      <div class="form-item"><label>录音时长</label><input id="J_duration" disabled /></div>
+      <div class="form-item"><label>文件存放路径</label><input id="J_filePath" disabled /></div>
+    </div>
+
+    <div class="play-wrap">
+      <div class="play" id="J_play"></div>
+      <div class="pause hidden" id="J_pause"></div>
+      <div class="stop hidden" id="J_stop"></div>
+    </div>
+</div>
+
+  <script>
+    var recording = false
+    var isToStop = false
+    var hasRecord = false
+    var isPausing = false
+
+    function setStatus (text) {
+      document.getElementById('J_recordStatus').innerHTML = text
+    }
+
+    function showRecordResult (data) {
+      document.getElementById('J_recordResult').classList.remove('hidden')
+      document.getElementById('J_duration').value = data.duration
+      document.getElementById('J_filePath').value = data.filePath
+    }
+
+    function play () {
+      document.getElementById('J_play').classList.add('hidden')
+      document.getElementById('J_pause').classList.remove('hidden')
+      document.getElementById('J_stop').classList.remove('hidden')
+
+      if (isPausing) {
+        xm.resumeAudio()
+      } else {
+        xm.playAudio({
+          url: document.getElementById('J_filePath').value
+        })
+      }
+      isPausing = false
+    }
+
+    function pause () {
+      document.getElementById('J_play').classList.remove('hidden')
+      document.getElementById('J_pause').classList.add('hidden')
+      document.getElementById('J_stop').classList.remove('hidden')
+      isPausing = true
+      xm.pauseAudio()
+    }
+
+    function stop () {
+      document.getElementById('J_play').classList.remove('hidden')
+      document.getElementById('J_pause').classList.add('hidden')
+      document.getElementById('J_stop').classList.add('hidden')
+      isPausing = false
+      xm.stopAudio()
+    }
+
+    document.getElementById('J_record').addEventListener('touchstart', function(ev) {
+      ev.target.classList.add('recording')
+      recording = true
+      setStatus('录音中')
+      xm.startRecord().catch(function(err) {
+        recording = false
+        ev.target.classList.remove('recording')
+        setStatus('录音失败:' + err.data)
+      })
+    })
+
+    document.getElementById('J_record').addEventListener('touchmove', function(ev) {
+      ev.preventDefault()
+      if (!recording) return
+      var currentTarget = document.elementFromPoint(ev.touches[0].clientX,ev.touches[0].clientY)
+
+      if (!currentTarget.classList.contains('record-item')) {
+        if (!isToStop) {
+          isToStop = true
+          setStatus('释放取消录音')
+        }
+      } else {
+        if (isToStop) {
+          isToStop = false
+          setStatus('录音中')
+        }
+      }
+    })
+
+    document.getElementById('J_record').addEventListener('touchend', function(ev) {
+      ev.preventDefault()
+      if (!recording) return
+      ev.target.classList.remove('recording')
+      recording = false
+      if (isToStop) {
+        setStatus('已取消录音')
+        xm.cancelRecord()
+      } else {
+        xm.stopRecord().then(function(res) {
+          showRecordResult(res)
+          setStatus('已录音结束')
+        }).catch(function(err) {
+          setStatus('录音失败:' + err)
+        })
+      }
+    })
+
+    document.getElementById('J_play').addEventListener('click', function(ev) {
+      play()
+    })
+
+    document.getElementById('J_pause').addEventListener('click', function(ev) {
+      pause()
+    })
+
+    document.getElementById('J_stop').addEventListener('click', function(ev) {
+      stop()
+    })
+  </script>
+</body>
+</html>

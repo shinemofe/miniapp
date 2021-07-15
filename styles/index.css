@@ -1,0 +1,198 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #eee;
+  font-size: 14px;
+}
+
+input, textarea {
+  outline: none;
+  background: #fff;
+  border: none;
+}
+
+.block {
+  width: 90%;
+  background: #fff;
+  margin: 15px auto;
+}
+
+.title {
+  line-height: 50px;
+  padding: 0 15px;
+  color: #999;
+}
+
+.close {
+  height: 50px;
+  overflow: hidden;
+}
+
+.close .title {
+  color: #000;
+}
+
+.list {
+  padding: 0 15px;
+}
+
+.item {
+  line-height: 36px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.api {
+  text-align: center;
+  margin: 50px 0;
+}
+.api span {
+  display: inline-block;
+  color: #aaa;
+  padding: 5px 10px;
+  border-bottom: 1px solid #aaa;
+  word-wrap: break-word;
+}
+
+.form {
+  border: solid #ccc;
+  border-width: 1px 0;
+  background: #fff;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.form-item {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  line-height: 30px;
+  padding: 10px 5px;
+  align-items: center;
+}
+
+.form-item:last-child {
+  border: none;
+}
+
+.form-item label {
+  margin-right: 10px;
+}
+
+.form-item input, 
+.form-item textarea{
+  flex: 1;
+}
+.form-item input[type="checkbox"] {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.btn-wrap {
+  text-align: center;
+  margin: 20px 0;
+}
+.btn {
+  padding: 5px 10px;
+  background: #3089dc;
+  color: #fff;
+  border: none;
+  outline: none;
+  margin: 5px;
+  min-width: 80px;
+  border-radius: 2px;
+}
+.btn:disabled {
+  background: gray;
+}
+
+.tip {
+  margin: 30px;
+  color: red;
+}
+
+.image-list {
+  background: #fff;
+  border: solid #eee;
+  padding: 10px;
+  width: 100%;
+}
+
+.image-item {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+}
+
+.image-item img {
+  width: 100%;
+  height: 100%;
+}
+
+.image-item-add {
+  border: 1px solid #eee;
+  background: url('../images/add.png') no-repeat center center;
+  background-size: 80% 80%;
+}
+
+.record-wrap {
+  text-align: center;
+  margin: 30px;
+  padding: 20px;
+}
+
+.to-record {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background: url('../images/record1.png') no-repeat center center;
+  background-size: 100%;
+}
+
+.recording {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background: url('../images/record2.png') no-repeat center center;
+  background-size: 100%;
+}
+
+.play {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url('../images/bofang.png') no-repeat center center;
+  background-size: 100%;
+  margin-right: 20px;
+}
+
+.pause {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url('../images/zanting.png') no-repeat center center;
+  background-size: 100%;
+  margin-right: 20px;
+}
+
+.stop {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url('../images/tingzhi.png') no-repeat center center;
+  background-size: 100%;
+  margin-right: 20px;
+}
+
+.play-wrap {
+  margin: 30px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}

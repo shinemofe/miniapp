@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>蓝牙</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <style>
+    .device-list {
+      padding: 20px;
+    }
+    .device-item {
+      padding: 0 10px;
+      display: block;
+      color: #333;
+      line-height: 30px;
+      border-bottom: 1px solid #ddd;
+      text-decoration: none;
+    }
+    .device-active {
+      background: #3089dc;
+      color: #fff;
+    }
+  </style>
+  <script src="shinemosdk://20000/index.js"></script>
+  <script src="../lib/vconsole.min.js"></script>
+  <script>xm.setEnableDebug({enableDebug: true})</script>
+</head>
+<body>
+  <!-- 打开蓝牙 done -->
+  <div>
+    <div class="api">
+      <span>xm.openBluetoothAdapter</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_openBtn">打开本机蓝牙</button>
+    </div>
+  </div>
+
+  <!-- 获取蓝牙状态 done -->
+  <div>
+    <div class="api">
+      <span>xm.getBluetoothAdapterState</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getStateBtn">获取蓝牙状态</button>
+    </div>
+  </div>
+
+  <!-- 开始扫描附近设备 done -->
+  <div>
+    <div class="api">
+      <span>xm.startBluetoothDevicesDiscovery</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_btn" disabled>开始搜索附近蓝牙设备</button>
+    </div>
+  </div>
+
+  <!-- 主动获取蓝牙设备列表 done -->
+  <div>
+    <div class="api">
+      <span>xm.getBluetoothDevices</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getDeviceBtn" disabled>主动获取蓝牙设备</button>
+    </div>
+    <div class="device-list" id="J_deviceList"></div>
+  </div>
+
+  <!-- 连接选中的设备并停止搜索 done -->
+  <div>
+    <div class="api">
+      <span>xm.createBLEConnection</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_connectBtn" disabled>连接选中设备并停止搜索</button>
+    </div>
+  </div>
+
+  <!-- 获取当前连接的蓝牙信息 done -->
+  <div>
+    <div class="api">
+      <span>xm.getConnectedDevices</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getConnectedBtn">获取当前连接的蓝牙信息</button>
+    </div>
+    <div class="device-list" id="J_connectedDeviceList">
+    </div>
+  </div>
+
+  <!-- 获取连接的蓝牙设备所有服务 done -->
+  <div>
+    <div class="api">
+      <span>xm.getBLEDeviceServices</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getServiceBtn" disabled>获取连接的蓝牙设备所有服务(service)</button>
+    </div>
+    <div class="device-list" id="J_serviceList"></div>
+  </div>
+
+  <!-- 获取蓝牙设备某个服务中所有特征值 done -->
+  <div>
+    <div class="api">
+      <span>xm.getBLEDeviceCharacteristics</span>
+    </div>
+    <div class="btn-wrap">
+      需要选中上方蓝牙，服务列表中个选中一个
+      <button class="btn" id="J_getCharacteristicBtn" disabled>获取蓝牙设备某个服务中所有特征值(characteristic)</button>
+    </div>
+
+    <div class="device-list" id="J_characteristicList"></div>
+  </div>
+
+  <!-- 启用/关闭低功耗蓝牙设备特征值变化时的 notify 功能 done -->
+  <div>
+    <div class="api">
+      <span>xm.notifyBLECharacteristicValueChange</span>
+    </div>
+    <div class="btn-wrap">
+      需要选中上方蓝牙，服务 ，特征值列表中个选中一个
+      <button class="btn" id="J_setNotifyBtn" disabled><span id="J_notifyText">启用</span>低功耗蓝牙设备特征值变化时的 notify 功能</button>
+    </div>
+  </div>
+
+  <!-- 读取低功耗蓝牙设备的特征值的二进制数据值 done -->
+  <div>
+    <div class="api">
+      <span>xm.readBLECharacteristicValue</span>
+    </div>
+    <div class="btn-wrap">
+      需要选中上方蓝牙，服务 ，特征值列表中个选中一个
+      <button class="btn" id="J_readBtn">读取低功耗蓝牙设备的特征值的二进制数据值</button>
+    </div>
+  </div>
+
+  <!-- 向低功耗蓝牙设备特征值中写入二进制数据 done -->
+  <div>
+    <div class="api">
+      <span>xm.writeBLECharacteristicValue</span>
+    </div>
+    <div class="form">
+      <div class="form-item"><label>特征值</label><input id="J_writeInput" placeholder="" /></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_writeBtn">向低功耗蓝牙设备特征值中写入二进制数据</button>
+    </div>
+  </div>
+
+  <!-- 断开与低功耗蓝牙设备的连接 done -->
+  <div>
+    <div class="api">
+      <span>xm.closeBLEConnection</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_disconnectBtn">断开与低功耗蓝牙设备的连接</button>
+    </div>
+  </div>
+
+  <!-- 关闭蓝牙模块 -->
+  <div>
+    <div class="api">
+      <span>xm.closeBluetoothAdapter</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_closeBtn">关闭蓝牙模块</button>
+    </div>
+  </div>
+
+  <script>
+    var deviceList = []
+    var selectedDevice
+    var serviceList = []
+    var selectedService
+    var charList = []
+    var selectedChar
+    var isOpenNotify = false
+
+    // 监听蓝牙状态变更
+    xm.on('onAdapterStateChange', function(ev) {
+      console.log('收到蓝牙状态变更的事件：', ev)
+      if (!ev.available) {
+        xm.showToast({ message: '蓝牙关闭'})
+      }
+    })
+
+    // 监听蓝牙特征值变化
+    xm.on('onBLECharacteristicValueChange', function(ev) {
+      console.log('收到蓝牙特征值变更的事件：', ev)
+    })
+
+    document.body.addEventListener('click', function(ev) {
+      // 点击蓝牙设备，选中要连接的蓝牙，并开启连接按钮
+      if (ev.target.classList.contains('J_deviceItem')) {
+        var deviceItems = document.querySelectorAll('.J_deviceItem')
+        for (var i = 0; i < deviceItems.length; i++) {
+          deviceItems[i].classList.remove('device-active')
+        }
+        ev.target.classList.add('device-active')
+        var deviceId = ev.target.getAttribute('data-id')
+        deviceList.some(function(x) {
+          if (x.deviceId == deviceId) {
+            selectedDevice = x
+            document.getElementById('J_connectBtn').disabled = false
+            return true
+          }
+        })
+      } 
+      // 点击已连接的蓝牙设备的服务列表，选中服务，并开启获取特征值按钮
+      else if (ev.target.classList.contains('J_serviceItem')) {
+        var servicetems = document.querySelectorAll('.J_serviceItem')
+        for (var i = 0; i < servicetems.length; i++) {
+          servicetems[i].classList.remove('device-active')
+        }
+        ev.target.classList.add('device-active')
+        var deviceId = ev.target.getAttribute('data-id')
+        serviceList.some(function(x) {
+          if (x.uuid == deviceId) {
+            selectedService = x
+            document.getElementById('J_getCharacteristicBtn').disabled = false
+            return true
+          }
+        })
+      } 
+      // 点击特征值列表，选中特征值，并开启触发通知按钮
+      else if (ev.target.classList.contains('J_charItem')) {
+        var servicetems = document.querySelectorAll('.J_charItem')
+        for (var i = 0; i < servicetems.length; i++) {
+          servicetems[i].classList.remove('device-active')
+        }
+        ev.target.classList.add('device-active')
+        var deviceId = ev.target.getAttribute('data-id')
+        charList.some(function(x) {
+          if (x.uuid == deviceId) {
+            selectedChar = x
+            document.getElementById('J_setNotifyBtn').disabled = false
+            return true
+          }
+        })
+      }
+    })
+
+    // 打开蓝牙模块 done
+    document.getElementById('J_openBtn').addEventListener('click', function() {
+      xm.openBluetoothAdapter().then(function() {
+        document.getElementById('J_openBtn').disabled = true
+        document.getElementById('J_btn').disabled = false
+        xm.showToast({ message: '打开本机蓝牙成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '打开本机蓝牙失败：' + err.msg})
+      })
+    })
+
+    // 获取蓝牙的状态 done
+    document.getElementById('J_getStateBtn').addEventListener('click', function() {
+      xm.getBluetoothAdapterState().then(function(res) {
+        xm.showToast({ message: '当前蓝牙' + (res.available ? '' : '不') + '可用，搜索状态' + (res.discovering ? '' : '未') + '开启'})
+      }).catch(function(err) {
+        xm.showToast({ message: '获取本机蓝牙状态失败：' + err.msg})
+      })
+    })
+
+    // 开启扫描 done
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.startBluetoothDevicesDiscovery().then(function() {
+        document.getElementById('J_btn').disabled = true
+        document.getElementById('J_getDeviceBtn').disabled = false
+        xm.showToast({ message: '开始搜索设备成功，去vconsole查看收到的事件'})
+
+        // 监听蓝牙设备搜索
+        xm.on('onDeviceFound', function(ev) {
+          console.log('收到发现蓝牙设备的事件：', ev.devices)
+        })
+      }).catch(function(err) {
+        xm.showToast({ message: '开始搜索设备失败：' + err.msg})
+      })
+    })
+
+    // 获取蓝牙设备列表 done
+    document.getElementById('J_getDeviceBtn').addEventListener('click', function() {
+      xm.getBluetoothDevices().then(function(res) {
+        xm.showToast({ message: '获取蓝牙设备列表成功'})
+        deviceList = res.devices
+        renderDeviceList('J_deviceList', res.devices)
+      }).catch(function(err) {
+        xm.showToast({ message: '获取蓝牙设备列表失败：' + err.msg})
+      })
+    })
+
+    // 连接选中的设备并停止搜索 done
+    document.getElementById('J_connectBtn').addEventListener('click', function() {
+      xm.createBLEConnection({
+        deviceId: selectedDevice.deviceId
+      }).then(function() {
+        xm.showToast({ message: '蓝牙连接成功'})
+        document.getElementById('J_getServiceBtn').disabled = false
+        xm.stopBluetoothDevicesDiscovery().then(function() {
+          xm.off('onDeviceFound')
+          xm.showToast({ message: '停止搜索设备成功'})
+        }).catch(function(err) {
+          xm.showToast({ message: '停止搜索设备失败：' + err.msg})
+        })
+      }).catch(function(err) {
+        xm.showToast({ message: '蓝牙连接失败：' + err.msg})
+      })
+    })
+
+    // 获取当前连接的蓝牙设备信息 done
+    document.getElementById('J_getConnectedBtn').addEventListener('click', function() {
+      xm.getConnectedDevices().then(function(res) {
+        xm.showToast({ message: '获取连接的设备列表成功'})
+        renderDeviceList('J_connectedDeviceList', res.devices, true)
+      }).catch(function(err) {
+        xm.showToast({ message: '获取连接的设备列表失败：' + err.msg})
+      })
+    })
+
+    // 获取连接的蓝牙设备的所有服务 done
+    document.getElementById('J_getServiceBtn').addEventListener('click', function() {
+      xm.getBLEDeviceServices({
+        deviceId: selectedDevice.deviceId
+      }).then(function(res) {
+        xm.showToast({ message: '获取设备Service成功'})
+        serviceList = res.services
+        renderServiceList('J_serviceList', res.services, 'J_serviceItem')
+      }).catch(function(err) {
+        xm.showToast({ message: '获取设备Service失败：' + err.msg})
+      })
+    })
+
+    // 获取蓝牙设备某个服务中所有特征值 done
+    document.getElementById('J_getCharacteristicBtn').addEventListener('click', function() {
+      xm.getBLEDeviceCharacteristics({
+        deviceId: selectedDevice.deviceId,
+        serviceId: selectedService.uuid
+      }).then(function(res) {
+        xm.showToast({ message: '获取设备特征值成功'})
+        charList = res.characteristics
+        renderServiceList('J_characteristicList', res.characteristics, 'J_charItem')
+      }).catch(function(err) {
+        xm.showToast({ message: '获取设备特征值失败：' + err.msg})
+      })
+    })
+
+    // 启用/关闭低功耗蓝牙设备特征值变化时的 notify 功能 done
+    document.getElementById('J_setNotifyBtn').addEventListener('click', function() {
+      xm.notifyBLECharacteristicValueChange({
+        deviceId: selectedDevice.deviceId,
+        serviceId: selectedService.uuid,
+        characteristicId: selectedChar.uuid,
+        state: !isOpenNotify
+      }).then(function(res) {
+        isOpenNotify = !isOpenNotify
+        document.getElementById('J_notifyText').innerText = isOpenNotify ? '关闭' : '启用'
+        xm.showToast({ message: '特征值变化时的notify功能' + (isOpenNotify ? '开启' : '关闭') + '成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '特征值变化时的notify功能' + (!isOpenNotify ? '开启' : '关闭') + '失败：' + err.msg})
+      })
+    })
+
+    // 读取低功耗蓝牙设备的特征值的二进制数据值 done
+    document.getElementById('J_readBtn').addEventListener('click', function() {
+      if (!selectedChar) {
+        return xm.showToast({ message: '当前未选中特征值'})
+      }
+      if (selectedChar.properties && !selectedChar.properties.read) {
+        xm.showToast({ message: '当前选中的特征值不支持读取'})
+      }
+
+      xm.readBLECharacteristicValue({
+        deviceId: selectedDevice.deviceId,
+        serviceId: selectedService.uuid,
+        characteristicId: selectedChar.uuid
+      }).then(function() {
+        xm.showToast({ message: '读取成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '读取失败：' + err.msg})
+      })
+    })
+
+    // 向低功耗蓝牙设备特征值中写入二进制数据 done
+    document.getElementById('J_writeBtn').addEventListener('click', function() {
+      if (!selectedChar) {
+        return xm.showToast({ message: '当前未选中特征值'})
+      }
+      if (selectedChar.properties && !selectedChar.properties.write) {
+        xm.showToast({ message: '当前选中的特征值不支持写入'})
+      }
+
+      xm.writeBLECharacteristicValue({
+        deviceId: selectedDevice.deviceId,
+        serviceId: selectedService.uuid,
+        characteristicId: selectedChar.uuid,
+        value: document.getElementById('J_writeInput').value.trim()
+      }).then(function() {
+        xm.showToast({ message: '写入成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '写入失败：' + err.msg})
+      })
+    })
+
+    // 断开与低功耗蓝牙设备的连接 done
+    document.getElementById('J_disconnectBtn').addEventListener('click', function() {
+      xm.closeBLEConnection({
+        deviceId: selectedDevice.deviceId
+      }).then(function() {
+        disconnect()
+        xm.showToast({ message: '断开成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '断开失败：' + err.msg})
+      })
+    })
+
+    // 关闭蓝牙模块 done
+    document.getElementById('J_closeBtn').addEventListener('click', function() {
+      xm.closeBluetoothAdapter().then(function() {
+        disconnect()
+        deviceList = []
+        selectedDevice = null
+        renderDeviceList('J_deviceList', deviceList)
+        document.getElementById('J_openBtn').disabled = false
+        document.getElementById('J_btn').disabled = true
+        document.getElementById('J_getDeviceBtn').disabled = true
+        xm.showToast({ message: '关闭蓝牙成功'})
+      }).catch(function(err) {
+        xm.showToast({ message: '关闭蓝牙失败：' + err.msg})
+      })
+    })
+
+    function disconnect() {
+      serviceList = []
+      selectedService = null
+      charList = []
+      selectedChar = null
+      isOpenNotify = false
+      renderServiceList('J_serviceList', serviceList, 'J_serviceItem')
+      renderServiceList('J_characteristicList', charList, 'J_charItem')
+      renderDeviceList('J_connectedDeviceList', [], true)
+      document.getElementById('J_setNotifyBtn').disabled = true
+      document.getElementById('J_getCharacteristicBtn').disabled = true
+      document.getElementById('J_getServiceBtn').disabled = true
+      document.getElementById('J_connectBtn').disabled = true
+    }
+
+    function renderDeviceList(id, devices, readonly) {
+      var str = ''
+      var cls = readonly ? '' : ' J_deviceItem'
+      devices.forEach(function(d) {
+        str += '<a href="javascript:;" class="device-item' + cls + '" data-id="' + d.deviceId + '">' + 
+                  d.name + 
+                  (d.RSSI ? ('(信号强度：' + d.RSSI + ')') : '') + 
+                '</a>'
+      })
+      document.getElementById(id).innerHTML = str
+    }
+
+    function renderServiceList(id, devices, cls) {
+      var str = ''
+      devices.forEach(function(d) {
+        str += '<a href="javascript:;" class="device-item ' + cls + '" data-id="' + d.uuid + '">' + 
+                  d.uuid + 
+                '</a>'
+      })
+      document.getElementById(id).innerHTML = str
+    }
+  </script>
+</body>
+</html>

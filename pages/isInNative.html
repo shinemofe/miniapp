@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+    />
+    <title>判断是否在小程序内</title>
+    <link rel="stylesheet" href="../styles/index.css" />
+    <script src="shinemosdk://20000/index.js"></script>
+    <script src="../lib/vconsole.min.js"></script>
+  </head>
+  <body>
+    <div class="api">
+      <span>xm.isInNative</span>
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>是否在小程序内</label><input id="J_output" disabled />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_btn">开始校验</button>
+    </div>
+
+    <script>
+      document.getElementById('J_btn').addEventListener('click', function () {
+        var res = xm.isInNative()
+        document.getElementById('J_output').value = res
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>子页面返回与触发父页面事件</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.navigateBack/xm.emitParent</span>
+  </div>
+  
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">触发父页面test事件</button>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_navigateBack">返回</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.emitParent('test', { message: '来自子页面的问候' })
+    })
+
+    document.getElementById('J_navigateBack').addEventListener('click', function() {
+      xm.navigateBack()
+    })
+
+  </script>
+</body>
+</html>

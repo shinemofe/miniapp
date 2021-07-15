@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+    />
+    <title>token</title>
+    <link rel="stylesheet" href="../styles/index.css" />
+    <script src="shinemosdk://20000/index.js"></script>
+    <script src="../lib/vconsole.min.js"></script>
+  </head>
+  <body>
+    <div class="api">
+      <span>xm.getAuthCode/xm.getToken</span>
+    </div>
+
+    <div class="tip">
+      注意：getAuthCode为获取华为IAM
+      SSO票据的API，SDK只负责统一调用API的方式，需要接入SDK的客户端实现此函数
+    </div>
+
+    <div class="form">
+      <div class="form-item">
+        <label>authCode</label><input id="J_code" disabled />
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn" id="J_getAuthCode">getAuthCode</button>
+    </div>
+
+    <div class="tip">
+      注意：getToken为获取业务方自有token的API，SDK只负责统一调用API的方式，需要接入SDK的客户端实现此函数
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>token</label><input id="J_token" disabled />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getToken">getToken</button>
+    </div>
+
+    <script>
+      document
+        .getElementById('J_getAuthCode')
+        .addEventListener('click', function () {
+          xm.getAuthCode().then(function (res) {
+            document.getElementById('J_code').value = res.encryptedString
+          })
+        })
+
+      document
+        .getElementById('J_getToken')
+        .addEventListener('click', function () {
+          xm.getToken().then(function (res) {
+            document.getElementById('J_token').value = res
+          })
+        })
+    </script>
+  </body>
+</html>

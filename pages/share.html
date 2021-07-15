@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>分享小程序</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.share</span>
+  </div>
+  <div class="tip">注意：分享需要有一个承载分享卡片的出口，SDK无法获取客户端的业务，需要接入SDK的客户端实现此函数。实现方式请参考文档</div>
+  <div class="form">
+    <div class="form-item"><label>appId</label><input id="J_input" placeholder="请输入小程序appId" /></div>
+    <div class="form-item"><label>要分享的页面相对路径</label><input id="J_path" placeholder="请输入相对路径" value="pages/share.html" /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">点击分享</button>
+  </div>
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      var appId = document.getElementById('J_input').value.trim()
+      var path = document.getElementById('J_path').value.trim()
+
+      if (!appId) {
+        return xm.showAlert({ title: '分享失败', message: '请输入appId' })
+      }
+
+      xm.share({ 
+        appId: appId,
+        logo: 'https://statics.jituancaiyun.com/config/logo.png',
+        title: '分享小程序Demo',
+        description: '小程序分享到聊天消息啦，点击试试',
+        relativeUrl: path
+       })
+    })
+  </script>
+</body>
+</html>

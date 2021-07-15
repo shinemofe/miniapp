@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>文件</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.chooseFile/xm.downloadFile</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><label>上传地址</label><input id="J_url" placeholder="为空则返回文件本地路径" value="https://filesystem.api.jituancaiyun.com/sfs/webUpload/srvfile?fileType=2&src=cdn" /></div>
+    <div class="form-item"><label>服务端获取文件内容的key值</label><input id="J_name" placeholder="可以为空" value="upfile" /></div>
+    <div class="form-item"><label>数量限制</label><input id="J_count" type="tel" maxlength="1" value="1" /></div>
+    <div class="form-item"><label>Content-Type</label><input id="J_contentType" placeholder="multipart/form-data" /></div>
+    <div class="form-item"><label>选择的文件名</label><input id="J_fileName" disabled /></div>
+    <div class="form-item"><label>选择的文件大小</label><input id="J_fileSize" disabled /></div>
+    <div class="form-item"><label>选择的文件类型</label><input id="J_fileType" disabled /></div>
+    <div class="form-item"><label>上传结果或本地路径</label><input id="J_data" disabled /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">选择文件</button>
+  </div>
+
+  <div class="form">
+    <div class="form-item"><label>文件地址</label><input id="J_downloadUrl" placeholder="文件地址" /></div>
+    <div class="form-item"><label>文件存放的路径</label><input id="J_filePath" placeholder="请输入文件存放路径与文件名" /></div>
+    <div class="form-item"><label>下载结果</label><input id="J_result" disabled /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_download">下载文件</button>
+  </div>
+
+
+  <div class="form">
+    <div class="form-item"><label>文件地址</label><input id="J_openUrl" placeholder="文件地址" /></div>
+    <div class="form-item"><label>文件名称</label><input id="J_openName" placeholder="文件名称" /></div>
+    <div class="form-item"><label>文件大小</label><input id="J_openSize" placeholder="文件大小" /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_open">读取表单内容打开文件</button>
+    <button class="btn" id="J_openFromChoose">选择文件打开</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      var url = document.getElementById('J_url').value.trim()
+      var name = document.getElementById('J_name').value.trim()
+      var count = Number(document.getElementById('J_count').value.trim())
+      var contentType = document.getElementById('J_contentType').value.trim()
+      
+      xm.chooseFile({
+        url: url,
+        name: name,
+        count: count,
+        headers: {
+          'Content-Type': contentType
+        }
+       }).then(function(res) {
+          res = res[0]
+          document.getElementById('J_fileName').value = res.fileName
+          document.getElementById('J_fileSize').value = res.fileSize
+          document.getElementById('J_fileType').value = res.fileType
+          document.getElementById('J_data').value = JSON.stringify(res.data)
+      })
+    })
+
+    document.getElementById('J_download').addEventListener('click', function() {
+      var url = document.getElementById('J_downloadUrl').value.trim()
+      var filePath = document.getElementById('J_filePath').value.trim()
+
+      if (!url) {
+        return xm.showAlert({ title: '下载文件', message: '文件地址不能为空' })
+      }
+
+      if (!filePath) {
+        return xm.showAlert({ title: '下载文件', message: '请输入文件存放路劲及文件名称'})
+      }
+      
+      xm.downloadFile({
+        url: url,
+        filePath: filePath
+       }).then(function(res) {
+        document.getElementById('J_result').value = res.state ? '下载成功' : '下载失败'
+      })
+    })
+
+    document.getElementById('J_open').addEventListener('click', function() {
+      var url = document.getElementById('J_openUrl').value.trim()
+      var fileName = document.getElementById('J_openName').value.trim()
+      var fileSize = Number(document.getElementById('J_openSize').value.trim())
+
+      if (!url) {
+        return xm.showToast({ message: '文件地址不能为空' })
+      }
+      
+      xm.openFile({
+        url: url,
+        fileName: fileName,
+        fileSize: fileSize
+       })
+    })
+
+    document.getElementById('J_openFromChoose').addEventListener('click', function() {
+      xm.chooseFile({
+        count: 1
+       }).then(function(res) {
+        xm.openFile(res[0])
+      })
+    })
+  </script>
+</body>
+</html>

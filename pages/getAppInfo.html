@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>获取客户端信息</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.getAppInfo</span>
+  </div>
+  <div class="tip">注意：安卓SDK无法获取到客户端的相关信息，需要接入SDK的客户端实现此函数。实现方式请参考文档</div>
+  <div class="form">
+    <div class="form-item"><label>版本号</label><input class="J_output" disable /></div>
+    <div class="form-item"><label>客户端名称</label><input class="J_output" disabled /></div>
+    <div class="form-item"><label>设置的语言</label><input class="J_output" disabled /></div>
+    <div class="form-item"><label>设置的字号</label><input class="J_output" disabled /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">点击获取</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.getAppInfo().then(function(res) {
+        var ouputs = document.querySelectorAll('.J_output')
+        ouputs[0].value = res.version
+        ouputs[1].value = res.name
+        ouputs[2].value = res.language
+        ouputs[3].value = res.fontSize
+      })
+    })
+  </script>
+</body>
+</html>

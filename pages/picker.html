@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>选取组件</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.picker</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><label>城市</label><input id="J_output" disabled value="杭州" /></div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">选择城市</button>
+  </div>
+
+  <script>
+    var value = 'hangzhou'
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.picker({
+        title: '选择城市',
+        defaultValue: value,
+        list: [
+          { text: '杭州', value: 'hangzhou' },
+          { text: '宁波', value: 'ningbo' },
+          { text: '北京', value: 'beijing' },
+          { text: '苏州', value: 'suzhou' },
+        ]
+      }).then(function(res) {
+        document.getElementById('J_output').value = res.text
+        value = res.value
+      })
+    })
+  </script>
+</body>
+</html>

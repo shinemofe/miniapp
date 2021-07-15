@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>发起一个请求</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.fetch</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><label>请求地址</label><input id="J_url" placeholder="请输入请求地址" value="https://cnodejs.org/api/v1/topics" /></div>
+    <div class="form-item"><label>请求方法</label><input id="J_method" value="GET" /></div>
+    <div class="form-item"><label>Content-Type</label><input id="J_contentType" value="application/json" /></div>
+    <div class="form-item"><label>参数</label><input id="J_body" value="{a: 1}" /></div>
+    <div class="form-item"><textarea id="J_output" rows="3"></textarea></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">发起请求</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      var url = document.getElementById('J_url').value.trim()
+      var method = document.getElementById('J_method').value.trim().toUpperCase() || 'GET'
+      var contentType = document.getElementById('J_contentType').value.trim().toUpperCase() || 'application/json'
+      var body = document.getElementById('J_body').value.trim()
+
+      if (contentType === 'application/json') {
+        try {
+          body = JSON.parse(body)
+        } catch(e) {
+          body = {}
+        }
+      }
+      
+      if (!url) {
+        return xm.showToast({ message: '请求地址不能为空'})
+      }
+
+      xm.fetch(url, { 
+        headers: {
+          'Content-Type': contentType
+        },
+        method: method,
+        body: body
+      }).then(function(response) {
+        response.json().then(function(result) {
+          document.getElementById('J_output').value = JSON.stringify(result)
+        })
+      })
+    })
+  </script>
+</body>
+</html>

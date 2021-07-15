@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>图片</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.chooseImage/xm.previewImages</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><label>图片来源</label><input id="J_sourceType" readonly value="拍照跟相册" /></div>
+    <div class="form-item"><label>数量限制</label><input id="J_count" type="tel" maxlength="1" value="1" /></div>
+    <div class="form-item"><label>是否需要返回base64</label><input id="J_needBase64" value="否" readonly /></div>
+  </div>
+  <div class="image-list" id="J_img">
+    <div class="image-item image-item-add J_add"></div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_preview">预览图片</button>
+  </div>
+
+  <script>
+    var sourceType = 0
+    var needBase64 = 0
+    var images = []
+
+    document.getElementById('J_sourceType').addEventListener('click', function() {
+      xm.showActionSheet({
+        title: '图片来源',
+        defaultValue: sourceType,
+        itemList: [
+          { text: '拍照跟相册', value: 0 },
+          { text: '仅拍照', value: 1 },
+          { text: '仅相册', value: 2 }
+        ]
+      }).then(function(res) {
+        sourceType = res.value
+        document.getElementById('J_sourceType').value = res.text
+      })
+    })
+
+    document.getElementById('J_needBase64').addEventListener('click', function() {
+      xm.showActionSheet({
+        title: '是否需要返回base64',
+        defaultValue: needBase64,
+        itemList: [
+          { text: '是', value: 1 },
+          { text: '否', value: 0 }
+        ]
+      }).then(function(res) {
+        needBase64 = res.value
+        document.getElementById('J_needBase64').value = res.text
+      })
+    })
+
+    document.getElementById('J_preview').addEventListener('click', function(ev) {
+      xm.previewImages({
+          urls: [
+            'https://img.alicdn.com/simba/img/TB1w4VFjXY7gK0jSZKzSuuikpXa.jpg',
+            'https://img.alicdn.com/simba/img/TB1VQuGpHj1gK0jSZFuSuwrHpXa.jpg',
+            'https://img.alicdn.com/simba/img/TB1DuHgphD1gK0jSZFKSuwJrVXa.jpg',
+            'https://img.alicdn.com/tfs/TB1P1BPpHH1gK0jSZFwXXc7aXXa-520-280.jpg_q90_.webp'
+          ],
+          current: 2
+        })
+    })
+
+    document.body.addEventListener('click', function(ev) {
+      if (ev.target.classList.contains('J_img')) {
+        var current = ev.target.getAttribute('data-index')
+        xm.previewImages({
+          urls: images,
+          current: Number(current)
+        })
+      } else if (ev.target.classList.contains('J_add')) {
+        xm.chooseImage({
+          sourceType: sourceType,
+          count: Number(document.getElementById('J_count').value),
+          needBase64: needBase64
+        }).then(function(res) {
+          var str = '<div class="image-item image-item-add J_add"></div>'
+          var i = ''
+
+          images = res.map(x => (x.base64 || x.path))
+          res.forEach(function(img, index) {
+            i += '<div class="image-item"><img data-index="' + index + '" class="J_img" src="' + (img.base64 ? ('data:image/png;base64,' + img.base64) : img.path) + '" /></div>'
+          })
+          document.getElementById('J_img').innerHTML = i + str
+        })
+      }
+    })
+  </script>
+</body>
+</html>

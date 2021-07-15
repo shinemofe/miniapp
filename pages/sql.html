@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>数据库</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+<script>xm.setEnableDebug({enableDebug: true})</script>
+<style>
+  .bg {
+    background: #ddd;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <div class="api">
+      <span>xm.createTable</span>
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>tableName</label>
+        <input id="J_tableName" placeholder="请输入表名" value="user" />
+      </div>
+      <div class="form-item bg">
+        <label>字段1</label>
+        <label><input type="checkbox" checked class="J_primary"><span>主键</span></label>
+        <label><input type="checkbox" checked class="J_notNull"><span>非空</span></label>
+      </div>
+      <div class="form-item">
+        <label>名称</label>
+        <input class="J_key" placeholder="请输入字段名" value="id" />
+      </div>
+      <div class="form-item">
+        <label>类型</label>
+        <input class="J_type" placeholder="请输入类型" value="INTEGER" />
+      </div>
+      <div class="form-item bg">
+        <label>字段2</label>
+        <label><input type="checkbox" class="J_primary"><span>主键</span></label>
+        <label><input type="checkbox" class="J_notNull"><span>非空</span></label>
+      </div>
+      <div class="form-item">
+        <label>名称</label>
+        <input class="J_key" placeholder="请输入字段名" value="name" />
+      </div>
+      <div class="form-item">
+        <label>类型</label>
+        <input class="J_type" placeholder="请输入类型" value="TEXT" />
+      </div>
+      <div class="form-item bg">
+        <label>字段3</label>
+        <label><input type="checkbox" class="J_primary"><span>主键</span></label>
+        <label><input type="checkbox" class="J_notNull"><span>非空</span></label>
+      </div>
+      <div class="form-item">
+        <label>名称</label>
+        <input class="J_key" placeholder="请输入字段名" value="age" />
+      </div>
+      <div class="form-item">
+        <label>类型</label>
+        <input class="J_type" placeholder="请输入类型" value="INTEGER" />
+      </div>
+      <div class="form-item bg">
+        <label>字段4</label>
+        <label><input type="checkbox" class="J_primary"><span>主键</span></label>
+        <label><input type="checkbox" class="J_notNull"><span>非空</span></label>
+      </div>
+      <div class="form-item">
+        <label>名称</label>
+        <input class="J_key" placeholder="请输入字段名" value="sexual" />
+      </div>
+      <div class="form-item">
+        <label>类型</label>
+        <input class="J_type" placeholder="请输入类型" value="TEXT" />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_create">创建表</button>
+    </div>
+  </div>
+  <div>
+    <div class="api">
+      <span>xm.tableInsert</span>
+    </div>
+    <div class="form" id="J_insertForm"></div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_insert">插入到表</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="api">
+      <span>xm.tableSelect</span>
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>查询条件</label>
+        <input id="J_selectCondition" placeholder="请输入查询条件" value="WHERE id=1 ORDER BY id DESC LIMIT 1" />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_select">查询表</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="api">
+      <span>xm.tableUpdate</span>
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>更新数据条件</label>
+        <input id="J_updateCondition" placeholder="请输入更新条件" value="SET name='jack' age=40 WHERE id=1" />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_update">更新表</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="api">
+      <span>xm.tableDelete</span>
+    </div>
+    <div class="form">
+      <div class="form-item">
+        <label>删除数据条件</label>
+        <input id="J_deleteCondition" placeholder="请输入删除条件" value="WHERE id=1" />
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_delete">删除表内数据</button>
+    </div>
+  </div>
+  
+
+  <script>
+    var primaryNode = document.querySelector('.J_primary')
+    var gTableName
+    var gColumnList = []
+    document.body.addEventListener('change', function(ev) {
+      if (ev.target.classList.contains('J_primary')) {
+        if (ev.target.checked) {
+          primaryNode.checked = false
+          primaryNode = ev.target
+        }
+      }
+    })
+
+    document.getElementById('J_create').addEventListener('click', function() {
+      var tableName = document.getElementById('J_tableName').value.trim()
+      var keyNodes = document.querySelectorAll('.J_key')
+      var typeNodes = document.querySelectorAll('.J_type')
+      var primaryNodes = document.querySelectorAll('.J_primary')
+      var notNullNodes = document.querySelectorAll('.J_notNull')
+
+      if (!tableName) {
+        return xm.showAlert({ title: '创建数据库表失败', message: '请输入表名' })
+      }
+
+      var columns = []
+
+      for (var i = 0; i < keyNodes.length; i++) {
+        var key = keyNodes[i].value.trim()
+        var type = typeNodes[i].value.trim()
+        var isPrimary = primaryNodes[i].checked
+        var isNotNull = notNullNodes[i].checked
+
+        if (key && type) {
+          columns.push({
+            column: key,
+            type: type + (isPrimary ? ' PRIMARY KEY' : '') + (isNotNull ? ' NOT NULL' : '')
+          })
+        }
+      }
+
+      xm.showToast({ message: '开始创建表名为' + tableName + 'key为' + columns.map(function(x) { return x.column }).join('、') + '的表' })
+
+      xm.createTable({ tableName: tableName, columnList: columns }).then(function() {
+        xm.showToast({ message: '创建成功'} )
+        gTableName = tableName
+        gColumnList = columns
+        renderInsertForm()
+      }).catch(function(err) {
+        xm.showToast({ message: '创建失败：' + err.msg} )
+      })
+    })
+
+    document.getElementById('J_insert').addEventListener('click', function() {
+      if (!gTableName) {
+        return xm.showToast({ message: '请先创建表'} )
+      }
+      var formItemNodes = document.querySelectorAll('.J_insertFormItem')
+      var list = []
+      var m = {}
+      var typeMap = {}
+
+      gColumnList.forEach(function(x) {
+        typeMap[x.column] = x.type.indexOf('INTEGER') > -1 ? 'number' : ''
+      })
+
+      for (var i = 0; i < formItemNodes.length; i++) {
+        var name = formItemNodes[i].name
+        var val = formItemNodes[i].value.trim()
+        if (!m[name]) {
+          m[name] = typeMap[name] === 'number' ? Number(val) : val
+        } else {
+          list.push(m)
+          m = {}
+          m[name] = typeMap[name] === 'number' ? Number(val) : val
+        }
+      }
+      list.push(m)
+
+      xm.tableInsert({
+        tableName: gTableName,
+        list: list
+      }).then(function() {
+        xm.showToast({ message: '插入数据成功'} )
+      }).catch(function(err) {
+        xm.showToast({ message: '插入数据失败：' + err.msg} )
+      })
+    })
+
+    document.getElementById('J_select').addEventListener('click', function() {
+      if (!gTableName) {
+        return xm.showToast({ message: '请先创建表'} )
+      }
+      var condition = document.getElementById('J_selectCondition').value.trim()
+
+      xm.tableSelect({
+        tableName: gTableName,
+        condition: condition
+      }).then(function(data) {
+        console.log('查询到的数据：', data)
+        xm.showToast({ message: '查询数据成功，请在vconsole中查看'} )
+      }).catch(function(err) {
+        xm.showToast({ message: '查询数据失败：' + err.msg} )
+      })
+    })
+
+    document.getElementById('J_update').addEventListener('click', function() {
+      if (!gTableName) {
+        return xm.showToast({ message: '请先创建表'} )
+      }
+      var condition = document.getElementById('J_updateCondition').value.trim()
+
+      xm.tableUpdate({
+        tableName: gTableName,
+        condition: condition
+      }).then(function(data) {
+        xm.showToast({ message: '更新数据成功'} )
+      }).catch(function(err) {
+        xm.showToast({ message: '更新数据失败：' + err.msg} )
+      })
+    })
+
+    document.getElementById('J_delete').addEventListener('click', function() {
+      if (!gTableName) {
+        return xm.showToast({ message: '请先创建表'} )
+      }
+      var condition = document.getElementById('J_deleteCondition').value.trim()
+
+      xm.tableDelete({
+        tableName: gTableName,
+        condition: condition
+      }).then(function(data) {
+        xm.showToast({ message: '删除数据成功'} )
+      }).catch(function(err) {
+        xm.showToast({ message: '删除数据失败：' + err.msg} )
+      })
+    })
+
+    function renderInsertForm() {
+      var str = ''
+      gColumnList.forEach(function(c, index) {
+        if (c.type.indexOf('PRIMARY KEY') > -1) {
+          return
+        }
+        str += '<div class="form-item">' +
+                '<label>' + c.column + '</label>' +
+                '<input class="J_insertFormItem" name="' + c.column + '" placeholder="请输入内容" />' +
+            '</div>'
+      })
+
+      str += str
+
+      document.getElementById('J_insertForm').innerHTML = str
+    }
+  </script>
+</body>
+</html>

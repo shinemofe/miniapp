@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>页面跳转</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.navigateTo/xm.redirectTo</span>
+    <span>xm.openApp/xm.openExternal</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><textarea id="J_output" rows="3"></textarea></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_navigateTo">打开设置导航条颜色的新页面并绑定test事件</button>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_openFSNavgatePage">新开一个全屏的页面</button>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_openFSJNNavgatePage">新开一个全屏带胶囊的页面</button>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_redirectTo">原地跳转页面</button>
+  </div>
+
+  <div class="tip">注意：打开一个新的小程序，需要三方客户端实现，sdk内的小程序无法获取其他小程序的应用密钥</div>
+
+  <div class="form">
+    <div class="form-item"><label>小程序appid</label><input id="J_appid" placeholder="请输入appid" /></div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="J_openApp">打开小程序</button>
+  </div>
+
+  <div class="tip">注意：打开一个外部网址，需要三方客户端实现，sdk内的小程序无法调用打开webkit</div>
+
+  <div class="form">
+    <div class="form-item"><label>外部网址</label><input id="J_url" placeholder="请输入外部网址" /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_openExternal">打开外部网址</button>
+  </div>
+  
+  <script>
+    var output = document.getElementById('J_output')
+    var print = function (log) {
+      output.value = output.value + '\n' + log
+      output.scrollTop = output.scrollHeight
+    }
+
+    document.getElementById('J_navigateTo').addEventListener('click', function() {
+      xm.navigateTo({ 
+        url: 'navigateTo.html',
+        navibarColor: '3089dc',
+        events: {
+          test: function(data) {
+            print('收到子页面触发的test事件收到:' + data.message)
+          }
+        }
+      })
+    })
+
+    document.getElementById('J_redirectTo').addEventListener('click', function() {
+      xm.redirectTo({ 
+        url: 'redirectTo.html'
+      })
+    })
+
+    document.getElementById('J_openApp').addEventListener('click', function() {
+      var appId = document.getElementById('J_appid').value.trim()
+
+      if (!appId) {
+        return xm.showAlert({ title: '打开小程序失败', message: '小程序appid不能为空' })
+      }
+
+      xm.openApp({ 
+        appid: appId
+      })
+    })
+
+
+    document.getElementById('J_openExternal').addEventListener('click', function() {
+      var url = document.getElementById('J_url').value.trim()
+
+      if (!url) {
+        return xm.showAlert({ title: '打开外部网址失败', message: '外部网址不能为空' })
+      }
+
+      xm.openExternal({ 
+        url: url
+      })
+    })
+
+    document.getElementById('J_openFSNavgatePage').addEventListener('click', function() {
+      xm.navigateTo({ 
+        url: 'navigateTo.html',
+        naviStyle: 1,
+        navibarColor: '3089dc',
+        events: {
+          test: function(data) {
+            print('收到子页面触发的test事件收到:' + data.message)
+          }
+        }
+      })
+    })
+
+    document.getElementById('J_openFSJNNavgatePage').addEventListener('click', function() {
+      xm.navigateTo({ 
+        url: 'navigateTo.html',
+        navistyle: 2,
+        navibarColor: '3089dc',
+        events: {
+          test: function(data) {
+            print('收到子页面触发的test事件收到:' + data.message)
+          }
+        }
+      })
+    })
+  </script>
+</body>
+</html>

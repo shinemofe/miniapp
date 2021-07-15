@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>视频</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+</head>
+<body>
+  <div class="api">
+    <span>xm.playMedia</span>
+  </div>
+  <div class="form">
+    <div class="form-item"><label>视频地址</label><input id="J_url" value="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" /></div>
+    <div class="form-item"><label>视频名称</label><input id="J_title" value="测试视频" /></div>
+  </div>
+  <div class="btn-wrap">
+    <button class="btn" id="J_btn">播放视频</button>
+  </div>
+
+  <script>
+    document.getElementById('J_btn').addEventListener('click', function() {
+      var url = document.getElementById('J_url').value.trim()
+      var title = document.getElementById('J_title').value
+
+      if (!url) {
+        return xm.showToast({ message: '视频地址不能为空' })
+      }
+      
+      xm.playMedia({
+        url: url,
+        title: title
+      })
+    })
+  </script>
+</body>
+</html>

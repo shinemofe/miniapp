@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>wifi</title>
+  <link rel="stylesheet" href="../styles/index.css">
+  <style>
+    .wifi-list {
+      padding: 20px;
+    }
+    .wifi-item {
+      padding: 0 10px;
+      display: block;
+      color: #333;
+      line-height: 30px;
+      border-bottom: 1px solid #ddd;
+      text-decoration: none;
+    }
+    .wifi-active {
+      background: #3089dc;
+      color: #fff;
+    }
+  </style>
+  <script src="shinemosdk://20000/index.js"></script>
+<script src="../lib/vconsole.min.js"></script>
+<script>xm.setEnableDebug({enableDebug: true})</script>
+</head>
+<body>
+  <!-- 检测当前连接的是否为wifi -->
+  <div>
+    <div class="api">
+      <span>xm.isWifi</span>
+    </div>
+    <div class="form">
+      <div class="form-item"><label>连接Wi-Fi</label><input id="J_output" disabled /></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_btn">开始检测</button>
+    </div>
+  </div>
+
+  <!-- 获取wifi列表 -->
+  <div>
+    <div class="api">
+      <span>xm.getWifiList</span>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getListBtn">获取wifi列表</button>
+    </div>
+    <div class="wifi-list" id="J_wifiList"></div>
+  </div>
+
+  <!-- 获取wifi列表 -->
+  <div>
+    <div class="api">
+      <span>xm.connectWifi</span>
+    </div>
+    <div class="form">
+      <div class="form-item"><label>wifi密码</label><input id="J_password" type="text" /></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_connectBtn" disabled>连接选中的wifi</button>
+    </div>
+  </div>
+
+  <!-- 获取当前连接的wifi信息 -->
+  <div>
+    <div class="api">
+      <span>xm.getCurrentWifi</span>
+    </div>
+    <div class="form">
+      <div class="form-item"><label>wifi名字</label><input id="J_ssid" disabled /></div>
+      <div class="form-item"><label>mac地址</label><input id="J_mac" disabled /></div>
+      <div class="form-item"><label>信号强度</label><input id="J_signalStrength" disabled /></div>
+      <div class="form-item"><label>加密方式</label><input id="J_capabilities" disabled /></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn" id="J_getConnectedBtn" disabled>获取连接的wifi信息</button>
+    </div>
+  </div>
+
+  <script>
+    var wifiList = []
+    var selectedWifi
+    document.body.addEventListener('click', function(ev) {
+      // 点击蓝牙设备，选中要连接的蓝牙，并开启连接按钮
+      if (ev.target.classList.contains('J_wifiItem')) {
+        var deviceItems = document.querySelectorAll('.J_wifiItem')
+        for (var i = 0; i < deviceItems.length; i++) {
+          deviceItems[i].classList.remove('wifi-active')
+        }
+        ev.target.classList.add('wifi-active')
+        var deviceId = ev.target.getAttribute('data-id')
+        wifiList.some(function(x) {
+          if (x.mac == deviceId) {
+            selectedWifi = x
+            document.getElementById('J_connectBtn').disabled = false
+            return true
+          }
+        })
+      }
+    })
+
+    document.getElementById('J_btn').addEventListener('click', function() {
+      xm.isWifi().then(function(res) {
+        document.getElementById('J_output').value = res ? '是' : '否'
+        if (res) {
+          document.getElementById('J_getConnectedBtn').disabled = false
+        }
+      })
+    })
+
+    document.getElementById('J_getListBtn').addEventListener('click', function() {
+      xm.getWifiList().then(function(res) {
+        wifiList = res
+        renderDeviceList('J_wifiList', res)
+      })
+    })
+
+    document.getElementById('J_connectBtn').addEventListener('click', function() {
+      xm.connectWifi({
+        ssid: selectedWifi.ssid,
+        mac: selectedWifi.mac,
+        capabilities: selectedWifi.capabilities,
+        password: document.getElementById('J_password').value
+      }).then(function() {
+        xm.showToast({ message: '连接wifi成功'})
+        document.getElementById('J_getConnectedBtn').disabled = false
+      }).catch(function(err) {
+        xm.showToast({ message: '连接wifi失败：' + err.msg})
+      })
+    })
+
+    document.getElementById('J_getConnectedBtn').addEventListener('click', function() {
+      xm.getCurrentWifi().then(function(res) {
+        document.getElementById('J_ssid').value = res.ssid
+        document.getElementById('J_mac').value = res.mac
+        document.getElementById('J_signalStrength').value = res.signalStrength
+        document.getElementById('J_capabilities').value = res.capabilities
+      }).catch(function(err) {
+        xm.showToast({ message: '获取连接的wifi信息失败：' + err.msg})
+      })
+    })
+
+    function renderDeviceList(id, devices) {
+      var str = ''
+      devices.forEach(function(d) {
+        str += '<a href="javascript:;" class="wifi-item J_wifiItem" data-id="' + d.mac + '">' + 
+                  d.ssid + 
+                  (d.signalStrength ? ('(信号强度：' + d.signalStrength + ')') : '') + 
+                '</a>'
+      })
+      document.getElementById(id).innerHTML = str
+    }
+  </script>
+</body>
+</html>
